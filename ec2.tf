@@ -1,6 +1,6 @@
 data "aws_ami" "ubuntu" {
   most_recent = true
-  owners      = ["099720109477"] # Canonical
+  owners      = ["099720109477"]
 
   filter {
     name   = "name"
@@ -8,14 +8,24 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-resource "aws_instance" "my_ec2" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
-  key_name      = "AWS_Key"   # must exist in your region
+resource "aws_instance" "app" {
+  ami                  = data.aws_ami.ubuntu.id
+  instance_type        = var.instance_type
+  key_name             = var.key_name
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 
- iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
- 
+  metadata_options {
+    http_tokens = "required"
+  }
+
+  root_block_device {
+    encrypted = true
+  }
+
   tags = {
-    Name = "server"
+    Name        = "prod-app-server"
+    Environment = var.environment
+    Owner       = "Hrishikesh"
+    Project     = "Terraform-Prod"
   }
 }

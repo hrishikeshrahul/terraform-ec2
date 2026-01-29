@@ -1,7 +1,5 @@
+# Terraform
 .terraform/
 *.tfstate
-*.tfstate.*
-terraform.tfvars
+*.tfstate.backup
 crash.log
-.vscode/
-.idea/
